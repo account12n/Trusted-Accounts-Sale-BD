@@ -84,8 +84,8 @@
   </div>
 
   <script>
-    // আপনার নতুন Web App URL টি এখানে যোগ করা হয়েছে।
-    const webAppUrl = 'https://script.google.com/macros/s/AKfycbwjAkOHvd6kWi6FF-I34DfWpleRjMb-KG-oDdkmMClSEXHYS_WpMnBp2YkVF14cxmla/exec'; 
+    // আপনার নতুন এবং চূড়ান্ত Web App URL টি এখানে যোগ করা হয়েছে।
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbwKURg5NHvBwKjM0DEw5WLhSuRHQsoUxUVyjoftajLJYhTfxz6cG-EakMvRN1fFGD7o/exec'; 
 
     let allProducts = [];
 
@@ -117,20 +117,21 @@
         }
     }
     
-    // বাকি সব JavaScript ফাংশন অপরিবর্তিত আছে
     function displaySettings(settings) {
         const descElement = document.getElementById('site-description-text');
         if (settings && settings.SiteDescription) { descElement.textContent = settings.SiteDescription; } 
         else { descElement.textContent = "Welcome to our marketplace!"; }
     }
+
     function displayProducts(products) {
         const container = document.getElementById('product-slots-container');
-        if (!products || products.length === 0) { container.innerHTML = '<div class="slot">No products found.</div>'; return; }
+        if (!products || products.length === 0) { container.innerHTML = '<div class="slot">No products found in your Google Sheet.</div>'; return; }
         container.innerHTML = products.map(p => {
             const paymentButtons = p.methods.map(method => `<button class="pay-method" onclick="showPaymentInput(this, '${method.toLowerCase()}')">${method}</button>`).join('');
             return `<div class="slot" data-product-name="${p.name}"><div class="slot-header"><img src="${p.logo}" alt="${p.name} logo"><div class="slot-info"><div>${p.name}</div><div class="slot-price">${p.price}</div></div><button class="sell-now" onclick="toggleExpand(this)">Sell Now</button></div><div class="expand-area"><input type="text" class="seller-name-input" placeholder="Enter your name"><input type="text" class="sheet-link-input" placeholder="Paste your Google Sheet link here"><div style="margin:10px 0 6px;font-weight:600">Add payment method</div><div style="display:flex;gap:10px;margin-bottom:10px">${paymentButtons}</div><input type="text" class="payment-input" style="display:none" placeholder=""><button class="submit-btn" onclick="submitSale(this)">Submit</button><div class="waiting-area"><span class="loader"></span>Submitting...</div><div class="submit-message" style="margin-top: 15px; font-weight: 600;"></div></div></div>`;
         }).join("");
     }
+
     function displaySellers(sellers, products) {
         const container = document.getElementById('seller-list-container');
         if (!sellers || sellers.length === 0) { container.innerHTML = '<div style="padding: 10px;">No sellers yet.</div>'; return; }
@@ -142,8 +143,17 @@
             return `<div class="seller-row"><div class="seller-info"><img src="${logo}" alt="${seller.product} logo"><span>${seller.name.toUpperCase()}</span></div>${statusHtml}</div>`;
         }).join('');
     }
+
     function toggleExpand(btn) { const ex = btn.closest('.slot').querySelector('.expand-area'); ex.style.display = ex.style.display === 'block' ? 'none' : 'block'; }
-    function showPaymentInput(btn, method) { const expandArea = btn.closest('.expand-area'); const input = expandArea.querySelector('.payment-input'); input.style.display = 'block'; input.placeholder = `Enter your ${method} account number`; expandArea.dataset.paymentMethod = method; }
+    
+    function showPaymentInput(btn, method) {
+        const expandArea = btn.closest('.expand-area');
+        const input = expandArea.querySelector('.payment-input');
+        input.style.display = 'block';
+        input.placeholder = `Enter your ${method} account number`;
+        expandArea.dataset.paymentMethod = method;
+    }
+
     function submitSale(btn) {
         const slot = btn.closest('.slot');
         const expandArea = btn.closest('.expand-area');
