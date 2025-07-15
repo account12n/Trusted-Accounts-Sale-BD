@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accounts Sale BD</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+      body{margin:0;font-family:'Poppins',sans-serif;background:#121212;color:#fff;text-align:center}
+      .header-bar{margin:20px auto;display:inline-flex;align-items:center;gap:10px;background:rgba(0,0,0,.5);border-radius:16px;padding:15px 30px;backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);position:relative;overflow:hidden}
+      .header-bar::before{content:'';position:absolute;top:50%;left:50%;width:250%;height:250%;background:radial-gradient(circle at center,rgba(0,255,255,.15),transparent 50%);animation:continuous-header-glow 8s linear infinite;z-index:1}
+      @keyframes continuous-header-glow{0%{transform:translate(-50%,-50%) rotate(0deg)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
+      .site-name{font-family:'Orbitron',sans-serif;font-size:1.6em;font-weight:700;display:flex;gap:5px;position:relative;z-index:2}
+      .site-name .b{color:#00ff00}.site-name .d{color:red}
+      .site-description{font-family:'Poppins',sans-serif;font-size:.9em;color:#ccc;padding:5px 15px}
+      .slot{background:rgba(0,0,0,.5);backdrop-filter:blur(12px);padding:20px;margin:30px auto;width:90%;max-width:550px;border-radius:16px;position:relative;overflow:hidden;transition:.4s;box-shadow:0 0 14px rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.1)}
+      .slot::before{content:'';position:absolute;top:-120%;left:-120%;width:240%;height:240%;background:radial-gradient(circle at center,rgba(0,255,255,.15),transparent 60%);transform:rotate(25deg);transition:.8s;z-index:1}
+      .slot:hover::before{top:0;left:0}
+      .slot:hover{transform:translateY(-6px);box-shadow:0 8px 25px rgba(0,255,255,.1)}
+      .slot-header,.expand-area,.seller-list,h2,.site-description{position:relative;z-index:2}
+      .slot-header{display:flex;align-items:center;justify-content:space-between;gap:15px}
+      .slot-header img{height:36px}
+      .slot-info{flex:1;text-align:left}
+      .slot-price{font-weight:700;color:#ff4d4d}
+      .sell-now{background:#fff;padding:10px 20px;border:none;color:#000;font-weight:700;border-radius:8px;cursor:pointer;transition:background-color .3s ease}
+      .sell-now:hover{background-color:#e0e0e0}
+      .expand-area{display:none;margin-top:20px;text-align:left}
+      .expand-area input[type=text]{width:calc(100% - 24px);padding:12px;margin:12px 0;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:#1e1e1e;color:#fff}
+      .submit-btn{padding:12px 25px;background:linear-gradient(45deg,#00aaff,#0077cc);color:#fff;font-weight:700;border:none;border-radius:10px;cursor:pointer;transition:background .3s ease}
+      .submit-btn:hover{background:linear-gradient(45deg,#0099e6,#0066b3)}
+      .waiting-area{display:none;margin-top:15px;color:#bbb;font-weight:600;display:flex;align-items:center;justify-content:center}
+      .loader,.loader-mini{border:2px solid #fff;border-top:2px solid transparent;border-radius:50%;animation:spin 1s linear infinite}
+      .loader{width:14px;height:14px;margin-right:8px}
+      .loader-mini{width:12px;height:12px}
+      .pay-method{background:#555;color:#fff;border:none;padding:10px 18px;border-radius:8px;cursor:pointer;font-weight:700;transition:background .3s ease}
+      .pay-method:hover{background:#777}
+      .seller-list{max-height:240px;overflow-y:auto;padding-right:8px}
+      .seller-row{display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.03);border-radius:12px;padding:12px 16px;margin:10px 0}
+      .seller-info{display:flex;align-items:center;gap:10px;font-weight:600}
+      .seller-info img{width:22px;height:22px}
+      .status-box{font-weight:700;display:flex;align-items:center;gap:8px}
+      .status-glow{width:10px;height:10px;border-radius:50%;background:#fff;box-shadow:0 0 6px #fff,0 0 12px #0ff;animation:glow 1.6s ease-in-out alternate infinite}
+      @keyframes glow{0%{opacity:.3}50%{opacity:1}100%{opacity:.3}}
+      @keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+      .telegram-link{margin-top:40px;margin-bottom:40px}
+      .telegram-link a{display:inline-flex;align-items:center;gap:10px;color:#00aaff;font-weight:700;font-size:18px;text-decoration:none;background:rgba(0,0,0,.3);padding:12px 22px;border-radius:15px;transition:all .3s ease;border:1px solid rgba(255,255,255,.1)}
+      .telegram-link a:hover{background:rgba(0,170,255,.15);color:#33bbff}
+      .telegram-link img{width:24px;height:24px}
+      .seller-list::-webkit-scrollbar{width:6px}
+      .seller-list::-webkit-scrollbar-thumb{background:#555;border-radius:4px}
+  </style>
+</head>
+<body>
+
+  <div class="header-bar">
+    <div class="site-name">
+      <span>Accounts</span>
+      <span>Sale</span>
+      <span class="b">B</span><span class="d">D</span>
+    </div>
+  </div>
+
+  <div class="slot">
+    <p class="site-description" id="site-description-text">Loading description...</p>
+  </div>
+
+  <div id="product-slots-container">
+      <div class="slot"><div class="loader-mini" style="margin: auto;"></div> &nbsp; Loading Products...</div>
+  </div>
+
+  <div class="slot">
+    <h2 style="font-size: 22px; margin-bottom: 15px;">📦 Sellers Overview</h2>
+    <div class="seller-list" id="seller-list-container">
+       <div class="loader-mini" style="margin: auto;"></div> &nbsp; Loading Sellers...
+    </div>
+  </div>
+
+  <div class="telegram-link">
+    <a href="https://t.me/ItsOwnerID_10" target="_blank">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram">
+      @ItsOwnerID_10
+    </a>
+  </div>
+
+  <script>
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbxf83viLw6tsIt_CVGjuCClRETJYrlPHQtZ0j7gf71yqZWr_lL8L2OlGaQvWXHG-Bvn/exec'; 
+
+    let allProducts = [];
+
+    async function loadWebsiteData() {
+        try {
+            const response = await fetch(webAppUrl);
+            const data = await response.json();
+
+            if (data.error) throw new Error(data.error);
+            
+            allProducts = data.products;
+            displaySettings(data.settings);
+            displayProducts(data.products);
+            displaySellers(data.sellers, data.products);
+
+        } catch (error) {
+            document.getElementById('site-description-text').textContent = "Failed to load description.";
+            document.getElementById('product-slots-container').innerHTML = `<div class="slot" style="color:red;">Failed to load data. Please check if Apps Script is deployed correctly.</div>`;
+            document.getElementById('seller-list-container').innerHTML = `<div style="color:red;">Failed to load sellers.</div>`;
+            console.error('Error loading data:', error);
+        }
+    }
+
+    function displaySettings(settings) {
+        const descElement = document.getElementById('site-description-text');
+        if (settings && settings.SiteDescription) {
+            descElement.textContent = settings.SiteDescription;
+        } else {
+            descElement.textContent = "Welcome to our marketplace!";
+        }
+    }
+
+    function displayProducts(products) {
+        const container = document.getElementById('product-slots-container');
+        if (!products || products.length === 0) {
+            container.innerHTML = '<div class="slot">No products found in your Google Sheet. Please add products to the "Products" sheet.</div>';
+            return;
+        }
+        container.innerHTML = products.map(p => {
+            const paymentButtons = p.methods.map(method => `<button class="pay-method" onclick="showPaymentInput(this, '${method.toLowerCase()}')">${method}</button>`).join('');
+            return `
+            <div class="slot" data-product-name="${p.name}">
+              <div class="slot-header">
+                <img src="${p.logo}" alt="${p.name} logo">
+                <div class="slot-info">
+                  <div>${p.name}</div>
+                  <div class="slot-price">${p.price}</div>
+                </div>
+                <button class="sell-now" onclick="toggleExpand(this)">Sell Now</button>
+              </div>
+              <div class="expand-area">
+                <input type="text" class="seller-name-input" placeholder="Enter your name">
+                <input type="text" class="sheet-link-input" placeholder="Paste your Google Sheet link here">
+                <div style="margin:10px 0 6px;font-weight:600">Add your payment method</div>
+                <div style="display:flex;gap:10px;margin-bottom:10px">${paymentButtons}</div>
+                <input type="text" class="payment-input" style="display:none" placeholder="">
+                <button class="submit-btn" onclick="submitSale(this)">Submit</button>
+                <div class="waiting-area"><span class="loader"></span>Submitting...</div>
+                <div class="submit-message" style="margin-top: 15px; font-weight: 600;"></div>
+              </div>
+            </div>`;
+        }).join("");
+    }
+
+    function displaySellers(sellers, products) {
+        const container = document.getElementById('seller-list-container');
+         if (!sellers || sellers.length === 0) {
+            container.innerHTML = '<div style="padding: 10px;">No sellers yet.</div>';
+            return;
+        }
+        sellers.sort((a, b) => (a.status.toLowerCase() === 'waiting' && b.status.toLowerCase() !== 'waiting' ? -1 : 1));
+        container.innerHTML = sellers.map(seller => {
+            const product = products.find(p => p.name === seller.product);
+            const logo = product ? product.logo : 'https://i.imgur.com/sF4J6Uj.png'; // একটি ডিফল্ট লোগো
+            const statusHtml = seller.status.toLowerCase() === 'received' ? `<div class="status-box">Received <div class="status-glow"></div></div>` : `<div class="status-box"><span class="loader-mini"></span> Waiting...</div>`;
+            return `<div class="seller-row"><div class="seller-info"><img src="${logo}" alt="${seller.product} logo"><span>${seller.name.toUpperCase()}</span></div>${statusHtml}</div>`;
+        }).join('');
+    }
+    
+    function toggleExpand(btn) {
+      const ex = btn.closest('.slot').querySelector('.expand-area');
+      ex.style.display = ex.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function showPaymentInput(btn, method) {
+      const expandArea = btn.closest('.expand-area');
+      const input = expandArea.querySelector('.payment-input');
+      input.style.display = 'block';
+      input.placeholder = `Enter your ${method} account number`;
+      expandArea.dataset.paymentMethod = method;
+    }
+
+    async function submitSale(btn) {
+        const slot = btn.closest('.slot');
+        const expandArea = btn.closest('.expand-area');
+        const sellerName = expandArea.querySelector('.seller-name-input').value.trim();
+        const sheetLink = expandArea.querySelector('.sheet-link-input').value.trim();
+        const paymentNumber = expandArea.querySelector('.payment-input').value.trim();
+        const paymentMethod = expandArea.dataset.paymentMethod;
+        const productName = slot.dataset.productName;
+        const messageDiv = expandArea.querySelector('.submit-message');
+
+        if (!sellerName || !sheetLink || !paymentNumber || !paymentMethod) {
+            messageDiv.textContent = 'Please fill all fields and select a payment method.';
+            messageDiv.style.color = 'red';
+            return;
+        }
+        const waitingDiv = expandArea.querySelector('.waiting-area');
+        waitingDiv.style.display = 'flex';
+        btn.style.display = 'none';
+        messageDiv.textContent = '';
+        const submissionData = { sellerName, productName, paymentMethod, paymentNumber, sheetLink };
+
+        try {
+            fetch(webAppUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(submissionData) });
+            messageDiv.textContent = 'Submission successful! Please refresh the page to see your name in the list.';
+            messageDiv.style.color = '#00ff00';
+            waitingDiv.style.display = 'none';
+        } catch (error) {
+            console.error('Submission Error:', error);
+            messageDiv.textContent = 'Submission failed. Please try again.';
+            messageDiv.style.color = 'red';
+            waitingDiv.style.display = 'none';
+            btn.style.display = 'block';
+        }
+    }
+    document.addEventListener('DOMContentLoaded', loadWebsiteData);
+  </script>
+</body>
+</html>
